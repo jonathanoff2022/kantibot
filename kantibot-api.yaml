@@ -75,8 +75,7 @@ components:
         Error:
             type: object
             example: '{"message":"Unauthorized."}'
-            required:
-                - message
+            required: [ message ]
             properties:
                 message:
                     type: string
@@ -85,10 +84,7 @@ components:
         User:
             type: object
             example: '{"username":"admin","createdAt":"2022-09-27 18:00:00.000","credit":40000}'
-            required:
-                - username
-                - createdAt
-                - credit
+            required: [ username, createdAt, credit ]
             properties:
                 username:
                     type: string
@@ -102,9 +98,7 @@ components:
         BotCheckResult:
             type: object
             example: '{"isBot":true,"score":0.99}'
-            required:
-                - isBot
-                - score
+            required: [ isBot, score ]
             properties:
                 isBot:
                     type: boolean
