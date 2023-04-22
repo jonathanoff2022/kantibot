@@ -1,0 +1,119 @@
+openapi: 3.0.1
+info:
+    title: KAntiBot API
+    description: Detect bots by IP address, user dashboard access
+    version: 1.0.0
+servers:
+    -   url: 'https://api.kantibot.net/api/v1'
+paths:
+    /bot/check:
+        get:
+            summary: Detects if the given information corresponds to a bot
+            description: Detects if the given IP address and User Agent looks like a bot
+            tags: [ 'Query', 'User' ]
+            security:
+                -   ApiKey: [ 'query' ]
+            responses:
+                200:
+                    description: The check succeed, the bot result is returned
+                    content:
+                        application/json:
+                            examples:
+                                'definitively a bot':
+                                    summary: The query belongs to a bot
+                                    value: '{"isBot":true,"score":1}'
+                                'not a bot':
+                                    summary: The query belongs to a real visitor
+                                    value: '{"isBot":false,"score":0}'
+                            schema:
+                                $ref: '#/components/schemas/BotCheckResult'
+                401:
+                    $ref: '#/components/responses/Unauthorized'
+                403:
+                    $ref: '#/components/responses/Forbidden'
+    /user:
+        get:
+            summary: Retrieve user information
+            description: Get user information like username, creation date, query credits
+            tags: [ 'User' ]
+            security:
+                -   ApiKey: [ 'read' ]
+            responses:
+                200:
+                    description: The user information has been retrieved
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/User'
+                401:
+                    $ref: '#/components/responses/Unauthorized'
+                403:
+                    $ref: '#/components/responses/Forbidden'
+security:
+    -   ApiKey: [ 'query', 'read' ]
+components:
+    securitySchemes:
+        ApiKey:
+            type: http
+            scheme: bearer
+    responses:
+        Unauthorized:
+            description: Authentication is required
+            content:
+                application/json:
+                    example: '{"message":"Unauthorized."}'
+                    schema:
+                        $ref: '#/components/schemas/Error'
+        Forbidden:
+            description: The user is not authorized to do this action
+            content:
+                application/json:
+                    example: '{"message":"You cannot perform this action."}'
+                    schema:
+                        $ref: '#/components/schemas/Error'
+    schemas:
+        Error:
+            type: object
+            example: '{"message":"Unauthorized."}'
+            required:
+                - message
+            properties:
+                message:
+                    type: string
+                    required: true
+                    description: A message describing the error
+        User:
+            type: object
+            example: '{"username":"admin","createdAt":"2022-09-27 18:00:00.000","credit":40000}'
+            required:
+                - username
+                - createdAt
+                - credit
+            properties:
+                username:
+                    type: string
+                    description: The name of the user
+                    required: true
+                createdAt:
+                    type: string
+                    description: The date of creation of the user, represented by ISO-8601
+                    required: true
+                credit:
+                    type: integer
+                    description: The remaining query credit of the user
+                    required: true
+        BotCheckResult:
+            type: object
+            example: '{"isBot":true,"score":0.99}'
+            required:
+                - isBot
+                - score
+            properties:
+                isBot:
+                    type: boolean
+                    required: true
+                    description: Describes if the given visitor details are detected as bot
+                score:
+                    type: number
+                    required: true
+                    description: The fraud score of the visitor details. Value between 0 (not a bot) to 1 (definitively bot)
