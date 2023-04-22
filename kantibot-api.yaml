@@ -93,15 +93,12 @@ components:
                 username:
                     type: string
                     description: The name of the user
-                    required: true
                 createdAt:
                     type: string
                     description: The date of creation of the user, represented by ISO-8601
-                    required: true
                 credit:
                     type: integer
                     description: The remaining query credit of the user
-                    required: true
         BotCheckResult:
             type: object
             example: '{"isBot":true,"score":0.99}'
@@ -111,9 +108,7 @@ components:
             properties:
                 isBot:
                     type: boolean
-                    required: true
                     description: Describes if the given visitor details are detected as bot
                 score:
                     type: number
-                    required: true
                     description: The fraud score of the visitor details. Value between 0 (not a bot) to 1 (definitively bot)
